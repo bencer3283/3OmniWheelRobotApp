@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -51,8 +53,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String? cmd;
+  BluetoothConnection? rpi;
 
-  void _incrementCounter() async {
+  void _sendToRpi(String text) async {
+    rpi!.output.add(Uint8List.fromList(utf8.encode(text)));
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -64,6 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _connectToRpi() async {
+    List<BluetoothDevice> paired =
+        await FlutterBluetoothSerial.instance.getBondedDevices();
+    for (BluetoothDevice device in paired) {
+      if (device.name == 'raspberrypi') {
+        cmd = device.name;
+        rpi = await BluetoothConnection.toAddress(device.address);
+      }
+    }
     setState(() {
       _counter++;
     });
@@ -104,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('command return'),
+            Text('command return: $cmd'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
@@ -115,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Spacer(),
                   IconButton(
-                    onPressed: _incrementCounter,
+                    onPressed: () => {_sendToRpi('l')},
                     icon: const Icon(
                       Icons.arrow_back_ios_rounded,
                     ),
@@ -131,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           angle: 90 * math.pi / 180,
                           child: IconButton(
                               iconSize: 60,
-                              onPressed: _incrementCounter,
+                              onPressed: () => {_sendToRpi('f')},
                               icon: const Icon(
                                 Icons.arrow_back_ios_rounded,
                               )),
@@ -143,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           angle: 90 * math.pi / 180,
                           child: IconButton(
                               iconSize: 60,
-                              onPressed: _incrementCounter,
+                              onPressed: () => {_sendToRpi('b')},
                               icon: const Icon(
                                 Icons.arrow_forward_ios_rounded,
                               )),
@@ -156,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   IconButton(
                       iconSize: 60,
-                      onPressed: _incrementCounter,
+                      onPressed: () => {_sendToRpi('r')},
                       icon: const Icon(
                         Icons.arrow_forward_ios_rounded,
                       )),
