@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String? cmd;
   BluetoothConnection? rpi;
+  var _isGrabbing = true;
 
   void _sendToRpi(String text) async {
     rpi!.output.add(Uint8List.fromList(utf8.encode(text)));
@@ -80,6 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+  }
+
+  void _disconnectRpi() {
+    rpi!.close();
+    rpi!.dispose();
   }
 
   @override
@@ -123,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headline4,
             ),
             TextButton(onPressed: _connectToRpi, child: Text('Connect')),
+            TextButton(onPressed: _disconnectRpi, child: Text('Disconnect')),
             Center(
               child: Row(
                 children: [
@@ -177,6 +184,36 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+            Center(
+              child: Row(
+                children: [
+                  Spacer(),
+                  GestureDetector(
+                      onTapUp: (details) {
+                        _sendToRpi('s');
+                      },
+                      onTapDown: (details) => {_sendToRpi('w')},
+                      child: Icon(
+                        Icons.rotate_left,
+                        size: 60,
+                      )),
+                  GestureDetector(
+                    onTapUp: (details) => _sendToRpi('s'),
+                    onTapDown: (details) => {_sendToRpi('c')},
+                    child: Icon(Icons.rotate_right, size: 60),
+                  ),
+                  Spacer()
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () => {
+                _isGrabbing ? _sendToRpi('u') : _sendToRpi('d'),
+                _isGrabbing = !_isGrabbing
+              },
+              icon: const Icon(Icons.sports_handball),
+              iconSize: 60,
+            )
           ],
         ),
       ),
