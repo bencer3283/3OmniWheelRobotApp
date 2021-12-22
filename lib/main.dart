@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _isGrabbing = true;
 
   void _sendToRpi(String text) async {
-    rpi!.output.add(Uint8List.fromList(utf8.encode(text)));
+    rpi?.output.add(Uint8List.fromList(utf8.encode(text)));
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -135,11 +135,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Spacer(),
                   IconButton(
-                    onPressed: () => {_sendToRpi('l')},
-                    icon: const Icon(
-                      Icons.arrow_back_ios_rounded,
-                    ),
+                    onPressed: () {},
                     iconSize: 60,
+                    icon: GestureDetector(
+                      onTapUp: (details) => _sendToRpi('s'),
+                      onTapDown: (d) => {_sendToRpi('l')},
+                      child: Icon(
+                        Icons.arrow_back_ios_rounded,
+                      ),
+                    ),
                   ),
                   Container(
                     width: 60,
@@ -150,11 +154,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         Transform.rotate(
                           angle: 90 * math.pi / 180,
                           child: IconButton(
-                              iconSize: 60,
-                              onPressed: () => {_sendToRpi('f')},
-                              icon: const Icon(
-                                Icons.arrow_back_ios_rounded,
-                              )),
+                            onPressed: () {},
+                            iconSize: 60,
+                            icon: GestureDetector(
+                                onTapDown: (details) => _sendToRpi('f'),
+                                onTapUp: (details) => _sendToRpi('s'),
+                                child: Icon(
+                                  Icons.arrow_back_ios_rounded,
+                                )),
+                          ),
                         ),
                         Spacer(
                           flex: 3,
@@ -162,11 +170,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         Transform.rotate(
                           angle: 90 * math.pi / 180,
                           child: IconButton(
-                              iconSize: 60,
-                              onPressed: () => {_sendToRpi('b')},
-                              icon: const Icon(
-                                Icons.arrow_forward_ios_rounded,
-                              )),
+                            onPressed: () => {},
+                            iconSize: 60,
+                            icon: GestureDetector(
+                                onTapUp: (details) => _sendToRpi('s'),
+                                onTapDown: (details) => _sendToRpi('b'),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                )),
+                          ),
                         ),
                         Spacer(
                           flex: 1,
@@ -175,10 +187,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   IconButton(
+                      onPressed: () => {},
                       iconSize: 60,
-                      onPressed: () => {_sendToRpi('r')},
-                      icon: const Icon(
-                        Icons.arrow_forward_ios_rounded,
+                      icon: GestureDetector(
+                        onTapDown: (details) => _sendToRpi('r'),
+                        onTapUp: (d) => _sendToRpi('s'),
+                        child: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                        ),
                       )),
                   Spacer(),
                 ],
@@ -188,19 +204,26 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Row(
                 children: [
                   Spacer(),
-                  GestureDetector(
-                      onTapUp: (details) {
-                        _sendToRpi('s');
-                      },
-                      onTapDown: (details) => {_sendToRpi('w')},
-                      child: Icon(
-                        Icons.rotate_left,
-                        size: 60,
-                      )),
-                  GestureDetector(
-                    onTapUp: (details) => _sendToRpi('s'),
-                    onTapDown: (details) => {_sendToRpi('c')},
-                    child: Icon(Icons.rotate_right, size: 60),
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 60,
+                    icon: GestureDetector(
+                        onTapUp: (details) {
+                          _sendToRpi('s');
+                        },
+                        onTapDown: (details) => {_sendToRpi('w')},
+                        child: Icon(
+                          Icons.rotate_left,
+                        )),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 60,
+                    icon: GestureDetector(
+                      onTapUp: (details) => _sendToRpi('s'),
+                      onTapDown: (details) => {_sendToRpi('c')},
+                      child: Icon(Icons.rotate_right),
+                    ),
                   ),
                   Spacer()
                 ],
